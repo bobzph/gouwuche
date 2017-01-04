@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>安哥拉 购物车</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <script src="angular.min.js"></script>
+    <style>
+        .table tr td,.table tr th{
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body ng-app="myapp">
+<div ng-controller="car">
+    <div style="text-align: center" ng-show="data.length==0">购物车是空的</div>
+    <div ng-show="data.length>0">
+    <input type="text" class="input-medium search-query" ng-model="aa">
+    <button type="submit" class="btn">搜索</button>
+    </div>
+
+    <table class="table table-bordered" ng-show="data.length>0">
+
+        <tr>
+            <th>商品名称</th>
+            <th>商品价格
+                <div ng-class={dropup:type=="-"} ng-click="order()">
+                    <span class="caret"></span>
+                </div>
+
+            </th>
+            <th>商品数量</th>
+            <th>商品总价</th>
+            <th>操作</th>
+        </tr>
+        <tr ng-repeat="item in data|filter:{name:aa}|orderBy:type+ziduan">
+                                 <!--搜索货物                 排序-->
+            <td>{{item.name}}</td>
+            <td>{{item.pirce}}</td>
+            <td>
+                <div class="input-group" style="width: 150px;margin: auto">
+                    <div class="input-group-addon" ng-click="jian(item.id)">&lt;</div>
+                    <input type="text" class="form-control" placeholder="num" ng-model="item.num" >
+                    <div class="input-group-addon" ng-click="jia(item.id)">&gt;</div>
+                </div>
+            </td>
+            <td>{{item.pirce*item.num}}</td>
+            <td >
+                <button class="btn-danger" ng-click="del(item.id)">删除</button>
+            </td>
+        </tr>
+        <tr>
+            <td>总价钱</td>
+            <td>{{getzongjia()}}</td>
+            <td>总数量</td>
+            <td>{{getNum()}}</td>
+            <td>
+                <button class="btn-danger"ng-click="clear()">全部删除</button>
+            </td>
+        </tr>
+    </table>
+
+</div>
+
+
+
+
+</body>
+
+<script>
+    angular.module("myapp",[])
+            .controller("car",function($scope){
+                $scope.type="";
+                $scope.ziduan="pirce";
+                $scope.order=function(){
+//                    默认排序
+                    if($scope.type==""){
+                        $scope.type="-"
+                    }else{
+                        $scope.type="";
+                    }
+
+                }
+                $scope.data=[
+                    {
+                        name:"鞋",
+                        pirce:200,
+                        num:1,
+                        id:1
+                    },
+                    {
+                        name:"衣服",
+                        pirce:400,
+                        num:3,
+                        id:2
+                    },
+                    {
+                        name:"裤子",
+                        pirce:270,
+                        num:1,
+                        id:3
+                    }
+                ]
+                $scope.getNum=function(){
+                    var nums=0;
+                    angular.forEach($scope.data,function(obj,index){
+                      var num=obj.num;
+                        if(parseInt(num)&&parseInt(num)>0){
+                            nums+=num;
+                        }else{
+                            obj.num="";
+                        }
+
+                    })
+                    return nums;
+
+                };
+                $scope.getzongjia=function(){
+                    var prices=0;
+                    angular.forEach($scope.data,function(obj,index){
+                        prices+=obj.num*obj.pirce;
+                    })
+                    return prices;
+
+                };
+                $scope.del=function(id){
+
+                    for(var i=0;i<$scope.data.length;i++){
+                        if(id==$scope.data[i].id){
+                            $scope.data.splice(i,1)
+                        }
+                    }
+                }
+               $scope.jian=function(id){
+                   var num=0;
+                   angular.forEach($scope.data,function(obj,index){
+                       if(id==obj.id){
+                           obj.num--;
+                       }
+                   })
+
+               }
+                $scope.jia=function(id){
+                    var num=0;
+                    angular.forEach($scope.data,function(obj,index){
+                       if(id==obj.id){
+                           obj.num++;
+                       }
+
+                    })
+
+                }
+                $scope.clear=function(){
+                    $scope.data=[];
+                }
+
+            })
+
+
+
+</script>
+
+
+</html>
